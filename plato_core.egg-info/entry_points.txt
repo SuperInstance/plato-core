@@ -1,2 +1,0 @@
-[superinstance.plugins]
-plato-core = plato_core.registry:register_core
