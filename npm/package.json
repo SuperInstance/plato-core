@@ -1,0 +1,30 @@
+{
+  "name": "@superinstance/plato-core",
+  "version": "0.1.0",
+  "description": "Foundation types and mesh registry for the SuperInstance ecosystem. Zero dependencies.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "plato",
+    "mesh",
+    "registry",
+    "plugin",
+    "ecosystem"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SuperInstance/plato-core"
+  },
+  "homepage": "https://github.com/SuperInstance/plato-core#readme",
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "typescript": "^6.0.3"
+  }
+}
