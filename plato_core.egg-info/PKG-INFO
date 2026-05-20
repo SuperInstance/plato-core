@@ -1,0 +1,103 @@
+Metadata-Version: 2.4
+Name: plato-core
+Version: 0.1.0
+Summary: Foundation types and mesh registry for the SuperInstance ecosystem
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+
+# plato-core
+
+Foundation types and mesh registry for the **SuperInstance** ecosystem.
+
+Zero external dependencies. Everything else builds on top.
+
+## What's Here
+
+- **Types** — `TrainingTile`, `TileType`, `TileLifecycle`, `LamportClock`, `TrainingConfig`, `TrainingMetrics`, `AdapterConfig`, `content_hash()`
+- **Mesh Registry** — Auto-discovery of ecosystem packages via Python `entry_points`
+
+## Install
+
+```bash
+pip install -e .
+```
+
+## Usage
+
+### Types
+
+```python
+from plato_core import TrainingTile, TileType, content_hash, LamportClock
+
+tile = TrainingTile(
+    tile_id="chk-001",
+    tile_type=TileType.CHECKPOINT,
+    name="my-model-v1",
+)
+
+clock = LamportClock()
+tile.lamport = clock.tick()
+
+h = content_hash(b"some weights data")
+```
+
+### Mesh Registry
+
+The registry auto-discovers all installed SuperInstance packages:
+
+```python
+from plato_core import MeshRegistry
+
+registry = MeshRegistry()
+matchers = registry.get_matchers()      # from plato-matcher
+compressors = registry.get_compressors()  # from plato-compress
+trainers = registry.get_trainers()       # from plato-training
+```
+
+## Registering a Plugin
+
+Any package can join the ecosystem:
+
+1. Add `plato-core` as a dependency
+2. Declare an entry point in `pyproject.toml`:
+
+```toml
+[project.entry-points."superinstance.plugins"]
+my-plugin = "my_package._mesh:register"
+```
+
+3. Implement the register function:
+
+```python
+# my_package/_mesh.py
+def register(registry):
+    registry.register("matchers", "my_matcher", lambda: MyMatcher)
+```
+
+Done. The mesh registry discovers it automatically.
+
+## Architecture
+
+```
+plato-core (this)       ← base types + registry
+  ├── plato-training    ← training rooms, micro models
+  ├── plato-matcher     ← semantic matching
+  ├── plato-compress    ← compression/quantization
+  └── ...               ← any future SuperInstance package
+```
+
+Each package is standalone. They communicate through shared types from plato-core and auto-discover each other via the mesh registry.
+
+## Development
+
+```bash
+pip install -e ".[dev]"
+pytest tests/ -v
+```
+
+## License
+
+MIT
