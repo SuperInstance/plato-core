@@ -98,6 +98,11 @@ plato-core (this)       ← base types + mesh registry
 
 ## Related Repos
 
-- **plato-types** — core tile protocol types (this package re-exports them)
-- **plato-training** — training rooms and micro models
-- **plato-mcp** — expose PLATO rooms as MCP tools
+- **[plato-types](https://github.com/SuperInstance/plato-types)** — Core tile protocol types (this package re-exports them)
+- **[plato-training](https://github.com/SuperInstance/plato-training)** — Training rooms and micro models
+- **[plato-mcp](https://github.com/SuperInstance/plato-mcp)** — Expose PLATO rooms as MCP tools
+- **[plato-engine](https://github.com/SuperInstance/plato-engine)** — Rust PLATO engine (high-performance backend)
+- **[cocapn-plato](https://github.com/SuperInstance/cocapn-plato)** — Full Cocapn PLATO integration (SDK + server)
+- **[plato-room-musician](https://github.com/SuperInstance/plato-room-musician)** — Sonify fleet activity via MIDI
+- **[cocapn-glue-core](https://github.com/SuperInstance/cocapn-glue-core)** — Binary wire protocol for fleet communication
+- **[penrose-memory](https://github.com/SuperInstance/penrose-memory)** — Aperiodic memory palace for AI agents
