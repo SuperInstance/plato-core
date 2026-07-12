@@ -128,3 +128,27 @@ def register_core(registry: MeshRegistry):
     registry.register("types", "TrainingConfig", lambda: TrainingConfig)
     registry.register("types", "TrainingMetrics", lambda: TrainingMetrics)
     registry.register("types", "content_hash", lambda: content_hash)
+
+    # Wire protocol types
+    from plato_core.protocol import (
+        TickResponse, HistoryResponse, AckResponse, AlarmListResponse,
+        WelcomeResponse, ErrorResponse, parse_response,
+        cmd_tick, cmd_history, cmd_actuator, cmd_alarm_list, cmd_alarm_set,
+        cmd_subscribe, cmd_unsubscribe, cmd_help, cmd_quit,
+    )
+    registry.register("protocol", "TickResponse", lambda: TickResponse)
+    registry.register("protocol", "HistoryResponse", lambda: HistoryResponse)
+    registry.register("protocol", "AckResponse", lambda: AckResponse)
+    registry.register("protocol", "AlarmListResponse", lambda: AlarmListResponse)
+    registry.register("protocol", "WelcomeResponse", lambda: WelcomeResponse)
+    registry.register("protocol", "ErrorResponse", lambda: ErrorResponse)
+    registry.register("protocol", "parse_response", lambda: parse_response)
+    registry.register("protocol", "cmd_tick", lambda: cmd_tick)
+    registry.register("protocol", "cmd_history", lambda: cmd_history)
+    registry.register("protocol", "cmd_actuator", lambda: cmd_actuator)
+    registry.register("protocol", "cmd_alarm_list", lambda: cmd_alarm_list)
+    registry.register("protocol", "cmd_alarm_set", lambda: cmd_alarm_set)
+    registry.register("protocol", "cmd_subscribe", lambda: cmd_subscribe)
+    registry.register("protocol", "cmd_unsubscribe", lambda: cmd_unsubscribe)
+    registry.register("protocol", "cmd_help", lambda: cmd_help)
+    registry.register("protocol", "cmd_quit", lambda: cmd_quit)

@@ -16,5 +16,28 @@ from .types import (
     content_hash,
 )
 from .registry import MeshRegistry, registry
+from .protocol import (
+    DEFAULT_PORT,
+    PROTOCOL_VERSION,
+    TickResponse,
+    HistoryResponse,
+    AckResponse,
+    AlarmEntry,
+    AlarmListResponse,
+    SubscribedResponse,
+    WelcomeResponse,
+    HelpResponse,
+    ErrorResponse,
+    parse_response,
+    cmd_tick,
+    cmd_history,
+    cmd_actuator,
+    cmd_alarm_list,
+    cmd_alarm_set,
+    cmd_subscribe,
+    cmd_unsubscribe,
+    cmd_help,
+    cmd_quit,
+)
 
 __version__ = "0.1.0"
