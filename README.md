@@ -1,5 +1,7 @@
 # plato-core
 
+**Plato Engine Block — a sub-400-line room runtime for agent-space interaction.**
+
 Foundation types and mesh registry for the PLATO (Protocol for Layered Agent Tile Orchestration) ecosystem. Zero external dependencies — everything else builds on top.
 
 ## Install
@@ -96,12 +98,30 @@ plato-core (this)       ← base types + mesh registry
 - [Mesh Architecture](docs/MESH-ARCHITECTURE.md) — how the registry and auto-discovery work
 - [docs/README.md](docs/README.md) — full documentation index
 
+## PLATO Engine Block Family
+
+Plato Core is the Python foundation layer of the broader PLATO ecosystem:
+
+| Component | Language | Repo | Focus |
+|---|---|---|---|
+| **Python Core** ← you are here | Python | [plato-core](https://github.com/SuperInstance/plato-core) | Foundation types, mesh registry, training tiles |
+| **C Reference** | C99 | [plato-engine-block-c](https://github.com/SuperInstance/plato-engine-block-c) | Embedded, bare-metal, zero heap alloc |
+| **Rust (Original)** | Rust | [plato-engine-block](https://github.com/SuperInstance/plato-engine-block) | `no_std` + alloc, builder pattern, tokio server |
+| **Elixir/OTP** | Elixir | [plato-engine-block-elixir](https://github.com/SuperInstance/plato-engine-block-elixir) | BEAM supervision trees, fault tolerance, hot reload |
+| **Zig** | Zig | [plato-engine-block-zig](https://github.com/SuperInstance/plato-engine-block-zig) | Comptime ternary packing, cross-compile |
+| **Runtime Kernel** | Rust | [plato-runtime-kernel](https://github.com/SuperInstance/plato-runtime-kernel) | Spatial model: tensor grid, batons, assertion traps |
+| **Server** | Python | [plato-server](https://github.com/SuperInstance/plato-server) | Knowledge tiles, fleet sync via Matrix, HTTP API |
+
+**Specs & Guides:**
+- 📜 [PLATO Wire Protocol](https://github.com/SuperInstance/AI-Writings/blob/main/PLATO_WIRE_PROTOCOL.md)
+- 📖 [PLATO Master Guide](https://github.com/SuperInstance/AI-Writings/blob/main/PLATO_MASTER_GUIDE.md)
+- 🗺️ [PLATO Ecosystem Map](https://github.com/SuperInstance/AI-Writings/blob/main/PLATO_ECOSYSTEM_MAP.md)
+
 ## Related Repos
 
 - **[plato-types](https://github.com/SuperInstance/plato-types)** — Core tile protocol types (this package re-exports them)
 - **[plato-training](https://github.com/SuperInstance/plato-training)** — Training rooms and micro models
 - **[plato-mcp](https://github.com/SuperInstance/plato-mcp)** — Expose PLATO rooms as MCP tools
-- **[plato-engine](https://github.com/SuperInstance/plato-engine)** — Rust PLATO engine (high-performance backend)
 - **[cocapn-plato](https://github.com/SuperInstance/cocapn-plato)** — Full Cocapn PLATO integration (SDK + server)
 - **[plato-room-musician](https://github.com/SuperInstance/plato-room-musician)** — Sonify fleet activity via MIDI
 - **[cocapn-glue-core](https://github.com/SuperInstance/cocapn-glue-core)** — Binary wire protocol for fleet communication
