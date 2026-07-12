@@ -24,7 +24,10 @@ from .protocol import (
     AckResponse,
     AlarmEntry,
     AlarmListResponse,
+    AlarmNotification,
     SubscribedResponse,
+    UnsubscribedResponse,
+    ByeResponse,
     WelcomeResponse,
     HelpResponse,
     ErrorResponse,
@@ -38,6 +41,7 @@ from .protocol import (
     cmd_unsubscribe,
     cmd_help,
     cmd_quit,
+    PlatoClient,
 )
 
 __version__ = "0.1.0"

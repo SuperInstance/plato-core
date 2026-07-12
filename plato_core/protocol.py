@@ -114,6 +114,45 @@ class SubscribedResponse:
 
 
 @dataclass
+class UnsubscribedResponse:
+    """Response to `unsubscribe` command. No data fields."""
+
+    @classmethod
+    def from_json(cls, obj: dict) -> "UnsubscribedResponse":
+        return cls()
+
+
+@dataclass
+class ByeResponse:
+    """Response to `quit` command. Server closes connection after this."""
+
+    @classmethod
+    def from_json(cls, obj: dict) -> "ByeResponse":
+        return cls()
+
+
+@dataclass
+class AlarmNotification:
+    """Spontaneous alarm notification sent to all subscribed clients.
+
+    Differs from AlarmListResponse: this is a single alarm firing in real-time,
+    not a list query response. Has `triggered_at` and the tick `data` that
+    caused the trigger.
+    """
+    id: str = ""
+    triggered_at: float = 0.0
+    data: dict[str, float] = field(default_factory=dict)
+
+    @classmethod
+    def from_json(cls, obj: dict) -> "AlarmNotification":
+        return cls(
+            id=obj.get("id", ""),
+            triggered_at=obj.get("triggered_at", 0.0),
+            data=obj.get("data", {}),
+        )
+
+
+@dataclass
 class WelcomeResponse:
     """Sent on connect. Tells the agent everything about the room."""
     room_id: str = ""
@@ -157,9 +196,12 @@ Response = Union[
     HistoryResponse,
     AckResponse,
     AlarmListResponse,
+    AlarmNotification,
     SubscribedResponse,
+    UnsubscribedResponse,
     WelcomeResponse,
     HelpResponse,
+    ByeResponse,
     ErrorResponse,
 ]
 
@@ -167,28 +209,26 @@ _RESPONSE_MAP = {
     "tick": TickResponse,
     "history": HistoryResponse,
     "ack": AckResponse,
+    "alarm": AlarmNotification,
     "alarm_list": AlarmListResponse,
     "subscribed": SubscribedResponse,
+    "unsubscribed": UnsubscribedResponse,
     "welcome": WelcomeResponse,
     "help": HelpResponse,
+    "bye": ByeResponse,
     "error": ErrorResponse,
-    "unsubscribed": None,  # No data, just type
-    "bye": None,
 }
 
 
-def parse_response(line: str) -> Response | None:
+def parse_response(line: str) -> Response:
     """
     Parse a JSON response line from an engine block.
 
-    Returns the appropriate response type, or None for unsubscribed/bye.
+    Returns the appropriate response type.
     Raises ValueError if the line is not valid JSON.
     """
     obj = json.loads(line)
     msg_type = obj.get("type", "")
-
-    if msg_type in ("unsubscribed", "bye"):
-        return None
 
     cls = _RESPONSE_MAP.get(msg_type)
     if cls is None:
@@ -249,3 +289,78 @@ def cmd_help() -> str:
 def cmd_quit() -> str:
     """Build a quit command."""
     return "quit"
+
+
+# ─── TCP Client ───────────────────────────────────────────────
+
+import socket as _socket
+
+
+class PlatoClient:
+    """Minimal TCP client for connecting to a PLATO engine block.
+
+    Usage:
+
+        from plato_core.protocol import PlatoClient
+
+        with PlatoClient.connect("localhost", 1234) as client:
+            welcome = client.recv_response()   # WelcomeResponse
+            client.send(cmd_tick())
+            tick = client.recv_response()      # TickResponse
+            client.send(cmd_quit())
+    """
+
+    def __init__(self, sock: _socket.socket):
+        self._sock = sock
+        self._buf = b""
+
+    @classmethod
+    def connect(cls, host: str = "localhost", port: int = DEFAULT_PORT,
+                timeout: float = 10.0) -> "PlatoClient":
+        """Open a TCP connection to an engine block."""
+        sock = _socket.create_connection((host, port), timeout=timeout)
+        return cls(sock)
+
+    def send(self, command: str) -> None:
+        """Send a command line to the engine block."""
+        data = command.encode("utf-8")
+        if not data.endswith(b"\n"):
+            data += b"\n"
+        self._sock.sendall(data)
+
+    def recv_line(self) -> str:
+        """Receive a single line (blocking until newline)."""
+        while b"\n" not in self._buf:
+            chunk = self._sock.recv(4096)
+            if not chunk:
+                if self._buf:
+                    line, self._buf = self._buf, b""
+                    return line.decode("utf-8")
+                raise ConnectionError("connection closed")
+            self._buf += chunk
+        line, self._buf = self._buf.split(b"\n", 1)
+        return line.decode("utf-8")
+
+    def recv_response(self) -> Response:
+        """Receive and parse the next response line."""
+        return parse_response(self.recv_line())
+
+    def tick(self) -> TickResponse:
+        """Convenience: send tick command, return parsed response."""
+        self.send(cmd_tick())
+        return self.recv_response()  # type: ignore
+
+    def history(self, n: int = 10) -> HistoryResponse:
+        """Convenience: send history command, return parsed response."""
+        self.send(cmd_history(n))
+        return self.recv_response()  # type: ignore
+
+    def close(self) -> None:
+        """Close the connection."""
+        self._sock.close()
+
+    def __enter__(self) -> "PlatoClient":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()

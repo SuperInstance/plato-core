@@ -132,7 +132,9 @@ def register_core(registry: MeshRegistry):
     # Wire protocol types
     from plato_core.protocol import (
         TickResponse, HistoryResponse, AckResponse, AlarmListResponse,
-        WelcomeResponse, ErrorResponse, parse_response,
+        AlarmNotification, SubscribedResponse, UnsubscribedResponse,
+        ByeResponse, WelcomeResponse, ErrorResponse, parse_response,
+        PlatoClient,
         cmd_tick, cmd_history, cmd_actuator, cmd_alarm_list, cmd_alarm_set,
         cmd_subscribe, cmd_unsubscribe, cmd_help, cmd_quit,
     )
@@ -140,9 +142,14 @@ def register_core(registry: MeshRegistry):
     registry.register("protocol", "HistoryResponse", lambda: HistoryResponse)
     registry.register("protocol", "AckResponse", lambda: AckResponse)
     registry.register("protocol", "AlarmListResponse", lambda: AlarmListResponse)
+    registry.register("protocol", "AlarmNotification", lambda: AlarmNotification)
+    registry.register("protocol", "SubscribedResponse", lambda: SubscribedResponse)
+    registry.register("protocol", "UnsubscribedResponse", lambda: UnsubscribedResponse)
+    registry.register("protocol", "ByeResponse", lambda: ByeResponse)
     registry.register("protocol", "WelcomeResponse", lambda: WelcomeResponse)
     registry.register("protocol", "ErrorResponse", lambda: ErrorResponse)
     registry.register("protocol", "parse_response", lambda: parse_response)
+    registry.register("protocol", "PlatoClient", lambda: PlatoClient)
     registry.register("protocol", "cmd_tick", lambda: cmd_tick)
     registry.register("protocol", "cmd_history", lambda: cmd_history)
     registry.register("protocol", "cmd_actuator", lambda: cmd_actuator)

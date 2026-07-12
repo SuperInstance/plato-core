@@ -10,7 +10,10 @@ from plato_core.protocol import (
     AckResponse,
     AlarmEntry,
     AlarmListResponse,
+    AlarmNotification,
     SubscribedResponse,
+    UnsubscribedResponse,
+    ByeResponse,
     WelcomeResponse,
     HelpResponse,
     ErrorResponse,
@@ -113,13 +116,25 @@ class TestResponseParsing:
         assert isinstance(resp, ErrorResponse)
         assert resp.message == "bad command"
 
+    def test_parse_alarm_notification(self):
+        """Spontaneous alarm notifications (spec §Spontaneous Messages)."""
+        resp = parse_response(json.dumps({
+            "type": "alarm", "id": "overheat", "triggered_at": 1749234437.0,
+            "data": {"coolant_temp_c": 96.3, "bilge_cm": 7, "rpm": 1790}
+        }))
+        assert isinstance(resp, AlarmNotification)
+        assert resp.id == "overheat"
+        assert resp.triggered_at == 1749234437.0
+        assert resp.data["coolant_temp_c"] == 96.3
+        assert resp.data["rpm"] == 1790
+
     def test_parse_unsubscribed(self):
         resp = parse_response(json.dumps({"type": "unsubscribed"}))
-        assert resp is None
+        assert isinstance(resp, UnsubscribedResponse)
 
     def test_parse_bye(self):
         resp = parse_response(json.dumps({"type": "bye"}))
-        assert resp is None
+        assert isinstance(resp, ByeResponse)
 
     def test_parse_unknown_type(self):
         resp = parse_response(json.dumps({"type": "unknown_xyz"}))
