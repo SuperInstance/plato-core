@@ -328,8 +328,9 @@ class PlatoClient:
             data += b"\n"
         self._sock.sendall(data)
 
-    def recv_line(self) -> str:
-        """Receive a single line (blocking until newline)."""
+    def recv_line(self, timeout: float = 30.0) -> str:
+        """Receive a single line (blocking until newline or timeout)."""
+        self._sock.settimeout(timeout)
         while b"\n" not in self._buf:
             chunk = self._sock.recv(4096)
             if not chunk:
