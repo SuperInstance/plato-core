@@ -143,8 +143,8 @@ class TrainingTile:
 
 
 def content_hash(data: bytes) -> str:
-    """SHA-256 content hash, truncated to 16 hex chars."""
-    return hashlib.sha256(data).hexdigest()[:16]
+    """SHA-256 content hash (full 64 hex chars, matches TypeScript)."""
+    return hashlib.sha256(data).hexdigest()
 
 
 class LamportClock:
