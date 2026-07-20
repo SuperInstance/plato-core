@@ -14,7 +14,7 @@ The SuperInstance ecosystem follows the **pytest plugin model**: every package i
 1. **Alone:** `pip install X` gives you X, fully functional.
 2. **Together:** `pip install X Y Z` auto-composes cross-package features without code changes.
 3. **No diamond problems:** Packages never hard-depend on each other. Only `plato-core` is a true dependency.
-4. **Entry-point discovery:** `importlib.metadata.entry_points(group="plato.mesh")` is the single source of truth.
+4. **Entry-point discovery:** `importlib.metadata.entry_points(group="superinstance.plugins")` is the single source of truth.
 5. **Registry, not framework:** Packages register capabilities; they don't ask permission.
 
 ---
@@ -126,10 +126,10 @@ These modules move to their natural homes in existing packages:
 
 ### 3.1 Entry Points
 
-Every mesh-aware package declares an entry point in group `plato.mesh`:
+Every mesh-aware package declares an entry point in group `superinstance.plugins`:
 
 ```toml
-[project.entry-points."plato.mesh"]
+[project.entry-points."superinstance.plugins"]
 plato-rooms = "plato_rooms.mesh:register"
 tensor-spline = "tensor_spline.mesh:register"
 eisenstein-embed = "eisenstein_embed.mesh:register"
@@ -212,7 +212,7 @@ class MeshRegistry:
             return
         self._discovered = True
         try:
-            eps = entry_points(group="plato.mesh")
+            eps = entry_points(group="superinstance.plugins")
         except Exception:
             eps = []
         for ep in eps:
@@ -324,7 +324,7 @@ except Exception:
 
 **Entry Points:**
 ```toml
-[project.entry-points."plato.mesh"]
+[project.entry-points."superinstance.plugins"]
 plato-rooms = "plato_rooms.mesh:register"
 ```
 
@@ -645,7 +645,7 @@ class MeshRegistry:
         self._discovered = True
         try:
             from importlib.metadata import entry_points
-            eps = entry_points(group="plato.mesh")
+            eps = entry_points(group="superinstance.plugins")
         except Exception:
             eps = []
         for ep in eps:
